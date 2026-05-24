@@ -79,8 +79,9 @@ func Load() (*Config, error) {
 
 	v.SetDefault("server.host", "0.0.0.0")
 	v.SetDefault("server.port", 8080)
-	v.SetDefault("server.read_timeout", "15s")
-	v.SetDefault("server.write_timeout", "15s")
+	// Increased timeouts from 15s to 30s for slower local dev environment
+	v.SetDefault("server.read_timeout", "30s")
+	v.SetDefault("server.write_timeout", "30s")
 	v.SetDefault("server.idle_timeout", "60s")
 
 	v.SetDefault("database.driver", "postgres")
@@ -115,36 +116,4 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("config: failed to unmarshal configuration: %w", err)
 	}
 
-	if err := cfg.validate(); err != nil {
-		return nil, fmt.Errorf("config: validation failed: %w", err)
-	}
-
-	return cfg, nil
-}
-
-// validate checks that required configuration values are present.
-func (c *Config) validate() error {
-	if c.Auth.JWTSecret == "" {
-		return fmt.Errorf("AUTH_JWT_SECRET must be set")
-	}
-	if c.Database.Name == "" {
-		return fmt.Errorf("DATABASE_NAME must be set")
-	}
-	if c.Database.User == "" {
-		return fmt.Errorf("DATABASE_USER must be set")
-	}
-	return nil
-}
-
-// DSN returns the database connection string for the configured driver.
-func (c *DatabaseConfig) DSN() string {
-	switch c.Driver {
-	case "postgres":
-		return fmt.Sprintf(
-			"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
-			c.Host, c.Port, c.User, c.Password, c.Name, c.SSLMode,
-		)
-	default:
-		return ""
-	}
-}
+	if 
