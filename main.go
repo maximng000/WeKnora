@@ -33,10 +33,11 @@ func main() {
 		log.Println("[INFO] No .env file found, using system environment variables")
 	}
 
-	// Retrieve the application port from environment, default to 8080.
+	// Retrieve the application port from environment, default to 3000.
+	// Changed default from 8080 to 3000 to avoid conflicts with other local services.
 	port := os.Getenv("APP_PORT")
 	if port == "" {
-		port = "8080"
+		port = "3000"
 	}
 
 	// Initialize and start the HTTP server.
