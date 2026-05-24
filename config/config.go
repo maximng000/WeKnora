@@ -88,8 +88,9 @@ func Load() (*Config, error) {
 	v.SetDefault("database.host", "localhost")
 	v.SetDefault("database.port", 5432)
 	v.SetDefault("database.sslmode", "disable")
-	v.SetDefault("database.max_open_conns", 25)
-	v.SetDefault("database.max_idle_conns", 5)
+	// Reduced pool size for local dev; upstream defaults (25/5) are more suited for production
+	v.SetDefault("database.max_open_conns", 10)
+	v.SetDefault("database.max_idle_conns", 3)
 	v.SetDefault("database.conn_max_lifetime", "5m")
 
 	v.SetDefault("redis.host", "localhost")
@@ -113,7 +114,8 @@ func Load() (*Config, error) {
 	cfg := &Config{}
 
 	if err := v.Unmarshal(cfg); err != nil {
-		return nil, fmt.Errorf("config: failed to unmarshal configuration: %w", err)
+		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
-	if 
+	return cfg, nil
+}
