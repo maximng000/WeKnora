@@ -98,7 +98,9 @@ func Load() (*Config, error) {
 	v.SetDefault("redis.port", 6379)
 	v.SetDefault("redis.db", 0)
 
-	v.SetDefault("auth.jwt_expiry", "24h")
+	// Shortened JWT expiry to 1h for local dev so I can test token refresh flows more easily.
+	// Upstream default is 24h which is fine for production but inconvenient when debugging auth.
+	v.SetDefault("auth.jwt_expiry", "1h")
 	v.SetDefault("auth.refresh_token_expiry", "168h") // 7 days
 
 	// Bind environment variables
@@ -106,8 +108,4 @@ func Load() (*Config, error) {
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
 
-	// Attempt to read a .env file if present (non-fatal if missing)
-	v.SetConfigName(".env")
-	v.SetConfigType("dotenv")
-	v.AddConfigPath(".")
-	_ = v
+	// Attempt to read a .env file if present (no
