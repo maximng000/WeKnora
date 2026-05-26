@@ -91,7 +91,8 @@ func Load() (*Config, error) {
 	// Reduced pool size for local dev; upstream defaults (25/5) are more suited for production
 	v.SetDefault("database.max_open_conns", 10)
 	v.SetDefault("database.max_idle_conns", 3)
-	v.SetDefault("database.conn_max_lifetime", "5m")
+	// Shortened lifetime to 3m to recycle connections more aggressively on my local Postgres instance
+	v.SetDefault("database.conn_max_lifetime", "3m")
 
 	v.SetDefault("redis.host", "localhost")
 	v.SetDefault("redis.port", 6379)
@@ -109,13 +110,4 @@ func Load() (*Config, error) {
 	v.SetConfigName(".env")
 	v.SetConfigType("dotenv")
 	v.AddConfigPath(".")
-	_ = v.ReadInConfig()
-
-	cfg := &Config{}
-
-	if err := v.Unmarshal(cfg); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
-	}
-
-	return cfg, nil
-}
+	_ = v
